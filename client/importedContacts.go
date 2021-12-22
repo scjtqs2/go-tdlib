@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/Arman92/go-tdlib/tdlib"
+	"github.com/Arman92/go-tdlib/v2/tdlib"
 )
 
 // ImportContacts Adds new contacts or edits existing contacts by their phone numbers; contacts' user identifiers are ignored

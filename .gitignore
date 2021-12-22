@@ -23,6 +23,8 @@
 # Project-local glide cache, RE: https://github.com/Masterminds/glide/issues/736
 .glide/
 
+.idea
+
 tdlib-db
 tdlib-files
 errors.txt
