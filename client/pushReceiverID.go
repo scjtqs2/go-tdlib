@@ -4,7 +4,6 @@ package client
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/Arman92/go-tdlib/v2/tdlib"
 )
@@ -12,7 +11,7 @@ import (
 // RegisterDevice Registers the currently used device for receiving push notifications. Returns a globally unique identifier of the push notification subscription
 // @param deviceToken Device token
 // @param otherUserIDs List of user identifiers of other users currently using the application
-func (client *Client) RegisterDevice(deviceToken tdlib.DeviceToken, otherUserIDs []int32) (*tdlib.PushReceiverID, error) {
+func (client *Client) RegisterDevice(deviceToken tdlib.DeviceToken, otherUserIDs []int64) (*tdlib.PushReceiverID, error) {
 	result, err := client.SendAndCatch(tdlib.UpdateData{
 		"@type":          "registerDevice",
 		"device_token":   deviceToken,
@@ -24,7 +23,7 @@ func (client *Client) RegisterDevice(deviceToken tdlib.DeviceToken, otherUserIDs
 	}
 
 	if result.Data["@type"].(string) == "error" {
-		return nil, fmt.Errorf("error! code: %d msg: %s", result.Data["code"], result.Data["message"])
+		return nil, tdlib.RequestError{Code: int(result.Data["code"].(float64)), Message: result.Data["message"].(string)}
 	}
 
 	var pushReceiverID tdlib.PushReceiverID
@@ -46,7 +45,7 @@ func (client *Client) GetPushReceiverID(payload string) (*tdlib.PushReceiverID, 
 	}
 
 	if result.Data["@type"].(string) == "error" {
-		return nil, fmt.Errorf("error! code: %d msg: %s", result.Data["code"], result.Data["message"])
+		return nil, tdlib.RequestError{Code: int(result.Data["code"].(float64)), Message: result.Data["message"].(string)}
 	}
 
 	var pushReceiverID tdlib.PushReceiverID

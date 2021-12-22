@@ -12,7 +12,7 @@ import (
 // @param chatID Chat identifier of the message with the button
 // @param messageID Message identifier of the message with the button
 // @param buttonID Button identifier
-func (client *Client) GetLoginURLInfo(chatID int64, messageID int64, buttonID int32) (tdlib.LoginURLInfo, error) {
+func (client *Client) GetLoginURLInfo(chatID int64, messageID int64, buttonID int64) (tdlib.LoginURLInfo, error) {
 	result, err := client.SendAndCatch(tdlib.UpdateData{
 		"@type":      "getLoginUrlInfo",
 		"chat_id":    chatID,
@@ -25,7 +25,30 @@ func (client *Client) GetLoginURLInfo(chatID int64, messageID int64, buttonID in
 	}
 
 	if result.Data["@type"].(string) == "error" {
-		return nil, fmt.Errorf("error! code: %d msg: %s", result.Data["code"], result.Data["message"])
+		return nil, tdlib.RequestError{Code: int(result.Data["code"].(float64)), Message: result.Data["message"].(string)}
+	}
+
+	switch tdlib.LoginURLInfoEnum(result.Data["@type"].(string)) {
+
+	default:
+		return nil, fmt.Errorf("Invalid type")
+	}
+}
+
+// GetExternalLinkInfo Returns information about an action to be done when the current user clicks an external link. Don't use this method for links from secret chats if web page preview is disabled in secret chats
+// @param link The link
+func (client *Client) GetExternalLinkInfo(link string) (tdlib.LoginURLInfo, error) {
+	result, err := client.SendAndCatch(tdlib.UpdateData{
+		"@type": "getExternalLinkInfo",
+		"link":  link,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	if result.Data["@type"].(string) == "error" {
+		return nil, tdlib.RequestError{Code: int(result.Data["code"].(float64)), Message: result.Data["message"].(string)}
 	}
 
 	switch tdlib.LoginURLInfoEnum(result.Data["@type"].(string)) {

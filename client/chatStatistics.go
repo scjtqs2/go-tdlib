@@ -24,7 +24,7 @@ func (client *Client) GetChatStatistics(chatID int64, isDark bool) (tdlib.ChatSt
 	}
 
 	if result.Data["@type"].(string) == "error" {
-		return nil, fmt.Errorf("error! code: %d msg: %s", result.Data["code"], result.Data["message"])
+		return nil, tdlib.RequestError{Code: int(result.Data["code"].(float64)), Message: result.Data["message"].(string)}
 	}
 
 	switch tdlib.ChatStatisticsEnum(result.Data["@type"].(string)) {
